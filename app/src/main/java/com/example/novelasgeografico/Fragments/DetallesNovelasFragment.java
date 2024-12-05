@@ -38,18 +38,18 @@ public class DetallesNovelasFragment extends Fragment implements PreferencesMana
 
         //Inflar el layout para este fragmento
         View view = inflater.inflate(R.layout.fragment_detalles_novela, container, false);
-        /*TextView textViewTitulo = view.findViewById(R.id.textViewTituloDetalle);
+        TextView textViewTitulo = view.findViewById(R.id.textViewTituloDetalle);
         TextView textViewAutor = view.findViewById(R.id.textViewAutorDetalle);
         TextView textViewAño = view.findViewById(R.id.textViewAñoDetalle);
         TextView textViewSinopsis = view.findViewById(R.id.textViewSinopsisDetalle);
-        CheckBox checkBoxFavorito = view.findViewById(R.id.checkbox_favorito);*/
+        CheckBox checkBoxFavorito = view.findViewById(R.id.checkbox_favorito);
         checkBoxUbicacion = view.findViewById(R.id.checkbox_ubicacion);
 
         //Instanciar el PreferencesManager
         preferencesManager = new PreferencesManager(requireContext());
 
         //Obtener la novela seleccionada y mostrar sus detalles
-        /*if (getArguments() != null) {
+        if (getArguments() != null) {
             novela = getArguments().getParcelable("novela");
             if (novela != null) {
                 textViewTitulo.setText(novela.getTitulo());
@@ -95,42 +95,7 @@ public class DetallesNovelasFragment extends Fragment implements PreferencesMana
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().popBackStack();
             }
-        });*/
-
-        if (getArguments() != null) {
-            novela = getArguments().getParcelable("novela");
-            if (novela != null) {
-                TextView textViewTitulo = view.findViewById(R.id.textViewTituloDetalle);
-                TextView textViewAutor = view.findViewById(R.id.textViewAutorDetalle);
-                TextView textViewAño = view.findViewById(R.id.textViewAñoDetalle);
-                TextView textViewSinopsis = view.findViewById(R.id.textViewSinopsisDetalle);
-                CheckBox checkBoxFavorito = view.findViewById(R.id.checkbox_favorito);
-
-                textViewTitulo.setText(novela.getTitulo());
-                textViewAutor.setText(novela.getAutor());
-                textViewAño.setText(String.valueOf(novela.getAñoPublicacion()));
-                textViewSinopsis.setText(novela.getSinopsis());
-                checkBoxFavorito.setChecked(novela.getFavorito());
-
-                checkBoxFavorito.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    novela.setFavorito(isChecked);
-                    preferencesManager.saveNovelas(preferencesManager.loadNovelasSync());
-                    Toast.makeText(getContext(), isChecked ? "Añadida a favoritos" : "Eliminada de favoritos", Toast.LENGTH_SHORT).show();
-                });
-
-                checkBoxUbicacion.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    if (isChecked) {
-                        showAddLocationDialog();
-                    } else {
-                        novela.setLatitude(0);
-                        novela.setLongitude(0);
-                        preferencesManager.saveNovelas(preferencesManager.loadNovelasSync());
-                        Toast.makeText(getContext(), "Ubicación eliminada", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        }
-
+        });
 
         return view;
     }
