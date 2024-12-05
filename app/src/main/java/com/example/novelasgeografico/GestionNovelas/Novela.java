@@ -13,6 +13,8 @@ public class Novela implements Parcelable {
     private int añoPublicacion;
     private String sinopsis;
     private boolean favorito;
+    private double latitude;
+    private double longitude;
 
     //Constructor vacío
     public Novela() {}
@@ -61,6 +63,18 @@ public class Novela implements Parcelable {
     }
     public void setFavorito(boolean favorito) {
         this.favorito = favorito;
+    }
+    public double getLatitude() {
+        return latitude;
+    }
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+    public double getLongitude() {
+        return longitude;
+    }
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     //Metodo equals

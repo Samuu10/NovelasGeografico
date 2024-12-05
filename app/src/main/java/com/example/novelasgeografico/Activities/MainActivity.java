@@ -73,13 +73,12 @@ public class MainActivity extends AppCompatActivity implements PreferencesManage
     }
 
     //Metodo para cargar un fragmento en el contenedor de fragmentos
-    private void loadFragment(Fragment fragment, String title) {
+    private void loadFragment(Fragment fragment, String tag) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.replace(R.id.fragment_container, fragment, tag);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
-        setTitle(title);
     }
 
     //metodo para cambiar entre la lista de novelas y la lista de favoritas
@@ -183,11 +182,12 @@ public class MainActivity extends AppCompatActivity implements PreferencesManage
 
     //Metodo para actualizar los fragmentos
     private void actualizarFragmentos() {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (fragment instanceof ListaNovelasFragment) {
-            ((ListaNovelasFragment) fragment).actualizarLista(novelas);
-        } else if (fragment instanceof ListaFavoritasFragment) {
-            ((ListaFavoritasFragment) fragment).actualizarLista(novelas);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
+        if (currentFragment instanceof ListaNovelasFragment) {
+            ((ListaNovelasFragment) currentFragment).actualizarLista(novelas);
+        } else if (currentFragment instanceof ListaFavoritasFragment) {
+            ((ListaFavoritasFragment) currentFragment).actualizarLista(novelas);
         }
     }
 

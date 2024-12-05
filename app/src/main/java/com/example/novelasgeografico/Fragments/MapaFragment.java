@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+
+import com.example.novelasgeografico.Almacenamiento.PreferencesManager;
+import com.example.novelasgeografico.GestionNovelas.Novela;
 import com.example.novelasgeografico.R;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -21,6 +25,8 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
+
+import java.util.List;
 
 public class MapaFragment extends Fragment {
 
@@ -46,7 +52,7 @@ public class MapaFragment extends Fragment {
             mapView.getOverlays().add(locationOverlay);
 
             IMapController mapController = mapView.getController();
-            mapController.setZoom(15.0);
+            mapController.setZoom(4.0);
 
             if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 Location lastKnownLocation = locationOverlay.getLastFix();
@@ -69,6 +75,8 @@ public class MapaFragment extends Fragment {
             Log.e("MapaFragment", "Error initializing MapView", e);
         }
 
+        new LoadNovelaMarkersTask().execute();
+
         return view;
     }
 
@@ -85,6 +93,28 @@ public class MapaFragment extends Fragment {
         super.onPause();
         if (mapView != null) {
             mapView.onPause();
+        }
+    }
+
+    private class LoadNovelaMarkersTask extends AsyncTask<Void, Void, List<Novela>> {
+        @Override
+        protected List<Novela> doInBackground(Void... voids) {
+            PreferencesManager preferencesManager = new PreferencesManager(requireContext());
+            return preferencesManager.loadNovelasSync();
+        }
+
+        @Override
+        protected void onPostExecute(List<Novela> novelas) {
+            for (Novela novela : novelas) {
+                if (novela.getLatitude() != 0 && novela.getLongitude() != 0) {
+                    GeoPoint point = new GeoPoint(novela.getLatitude(), novela.getLongitude());
+                    Marker marker = new Marker(mapView);
+                    marker.setPosition(point);
+                    marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                    marker.setTitle(novela.getTitulo() + " - " + novela.getAutor());
+                    mapView.getOverlays().add(marker);
+                }
+            }
         }
     }
 }

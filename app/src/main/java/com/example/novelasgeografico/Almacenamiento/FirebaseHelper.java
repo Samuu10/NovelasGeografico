@@ -1,7 +1,6 @@
 package com.example.novelasgeografico.Almacenamiento;
 
 import android.os.AsyncTask;
-
 import com.example.novelasgeografico.GestionNovelas.Novela;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -25,6 +24,9 @@ public class FirebaseHelper {
 
     //Metodo para cargar las novelas
     public void cargarNovelas(String titulo, ValueEventListener listener) {
+        if (titulo == null || listener == null) {
+            return; // Avoid null pointer exceptions
+        }
         new CargarNovelasTask(titulo, listener).execute();
     }
 
@@ -44,6 +46,9 @@ public class FirebaseHelper {
         //Metodo doInBackground para cargar las novelas de Firebase
         @Override
         protected Void doInBackground(Void... voids) {
+            if (database == null) {
+                return null; // Avoid null pointer exceptions
+            }
             DatabaseReference databaseReference = database.getReference("novelas");
             Query query = databaseReference.orderByChild("titulo").equalTo(titulo);
             query.addListenerForSingleValueEvent(listener);
