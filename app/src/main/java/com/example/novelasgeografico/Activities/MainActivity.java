@@ -200,6 +200,7 @@ public class MainActivity extends AppCompatActivity implements PreferencesManage
         loadFragment(fragment, "Detalles de la Novela");
     }
 
+    //Metodo para gestionar la respuesta de los permisos de ubicación
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -211,6 +212,15 @@ public class MainActivity extends AppCompatActivity implements PreferencesManage
                 // Permission denied, show a message to the user
                 Toast.makeText(this, "Location permission is required to show the map", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    //Metodo para actualizar el mapa
+    public void actualizarMapa() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        MapaFragment mapaFragment = (MapaFragment) fragmentManager.findFragmentByTag("Mapa");
+        if (mapaFragment != null) {
+            mapaFragment.actualizarMarcadores();
         }
     }
 

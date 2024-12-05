@@ -80,6 +80,13 @@ public class MapaFragment extends Fragment {
         return view;
     }
 
+    //Metodo para actualizar los marcadores de las novelas en el mapa
+    public void actualizarMarcadores() {
+        mapView.getOverlays().clear();
+        mapView.getOverlays().add(locationOverlay);
+        new LoadNovelaMarkersTask().execute();
+    }
+
     @Override
     public void onResume() {
         super.onResume();

@@ -16,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+
+import com.example.novelasgeografico.Activities.MainActivity;
 import com.example.novelasgeografico.R;
 import com.example.novelasgeografico.Almacenamiento.PreferencesManager;
 import com.example.novelasgeografico.GestionNovelas.Novela;
@@ -64,17 +66,14 @@ public class DetallesNovelasFragment extends Fragment implements PreferencesMana
         //Checkbox para marcar como favorito
         checkBoxFavorito.setOnCheckedChangeListener((buttonView, isChecked) -> {
             novela.setFavorito(isChecked);
-            preferencesManager.loadNovelas(new PreferencesManager.LoadNovelasCallback() {
-                @Override
-                public void onNovelasLoaded(List<Novela> loadedNovelas) {
-                    for (Novela n : loadedNovelas) {
-                        if (n.equals(novela)) {
-                            n.setFavorito(novela.getFavorito());
-                            break;
-                        }
+            preferencesManager.loadNovelas(loadedNovelas -> {
+                for (Novela n : loadedNovelas) {
+                    if (n.equals(novela)) {
+                        n.setFavorito(novela.getFavorito());
+                        break;
                     }
-                    preferencesManager.saveNovelas(loadedNovelas);
                 }
+                preferencesManager.saveNovelas(loadedNovelas);
             });
         });
 
@@ -160,6 +159,10 @@ public class DetallesNovelasFragment extends Fragment implements PreferencesMana
                 novela.setLongitude(address.getLongitude());
                 preferencesManager.saveNovelas(preferencesManager.loadNovelasSync());
                 Toast.makeText(requireContext(), "Ubicación añadida al mapa", Toast.LENGTH_SHORT).show();
+                // Notificar al MapaFragment para actualizar el mapa
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).actualizarMapa();
+                }
             } else {
                 Toast.makeText(requireContext(), "Ciudad no encontrada", Toast.LENGTH_SHORT).show();
                 checkBoxUbicacion.setChecked(false);
