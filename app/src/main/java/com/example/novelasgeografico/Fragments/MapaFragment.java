@@ -19,6 +19,7 @@ import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 public class MapaFragment extends Fragment {
@@ -41,15 +42,24 @@ public class MapaFragment extends Fragment {
 
             locationOverlay = new MyLocationNewOverlay(mapView);
             locationOverlay.enableMyLocation();
+            locationOverlay.enableFollowLocation();
             mapView.getOverlays().add(locationOverlay);
 
             IMapController mapController = mapView.getController();
             mapController.setZoom(15.0);
+
             if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                GeoPoint lastKnownLocation = locationOverlay.getMyLocation();
+                Location lastKnownLocation = locationOverlay.getLastFix();
                 if (lastKnownLocation != null) {
                     GeoPoint startPoint = new GeoPoint(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
                     mapController.setCenter(startPoint);
+
+                    // Add a marker for the user's location
+                    Marker startMarker = new Marker(mapView);
+                    startMarker.setPosition(startPoint);
+                    startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                    startMarker.setTitle("You are here");
+                    mapView.getOverlays().add(startMarker);
                 }
             } else {
                 // Request location permission if not granted
