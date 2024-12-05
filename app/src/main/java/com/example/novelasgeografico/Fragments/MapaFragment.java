@@ -118,10 +118,11 @@ public class MapaFragment extends Fragment {
                     Marker marker = new Marker(mapView);
                     marker.setPosition(point);
                     marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-                    marker.setTitle(novela.getTitulo() + " - " + novela.getAutor());
+                    marker.setTitle(novela.getTitulo());
                     mapView.getOverlays().add(marker);
                 }
             }
+            mapView.invalidate();
         }
     }
 }

@@ -85,7 +85,7 @@ public class DetallesNovelasFragment extends Fragment implements PreferencesMana
                 novela.setLatitude(0);
                 novela.setLongitude(0);
                 preferencesManager.saveNovelas(preferencesManager.loadNovelasSync());
-                Toast.makeText(requireContext(), "Ubicación eliminada", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(requireContext(), "Ubicación eliminada", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -159,7 +159,6 @@ public class DetallesNovelasFragment extends Fragment implements PreferencesMana
                 novela.setLongitude(address.getLongitude());
                 preferencesManager.saveNovelas(preferencesManager.loadNovelasSync());
                 Toast.makeText(requireContext(), "Ubicación añadida al mapa", Toast.LENGTH_SHORT).show();
-                // Notificar al MapaFragment para actualizar el mapa
                 if (getActivity() instanceof MainActivity) {
                     ((MainActivity) getActivity()).actualizarMapa();
                 }
