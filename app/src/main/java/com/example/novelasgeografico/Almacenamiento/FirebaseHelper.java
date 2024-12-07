@@ -25,7 +25,7 @@ public class FirebaseHelper {
     //Metodo para cargar las novelas
     public void cargarNovelas(String titulo, ValueEventListener listener) {
         if (titulo == null || listener == null) {
-            return; // Avoid null pointer exceptions
+            return;
         }
         new CargarNovelasTask(titulo, listener).execute();
     }
@@ -47,7 +47,7 @@ public class FirebaseHelper {
         @Override
         protected Void doInBackground(Void... voids) {
             if (database == null) {
-                return null; // Avoid null pointer exceptions
+                return null;
             }
             DatabaseReference databaseReference = database.getReference("novelas");
             Query query = databaseReference.orderByChild("titulo").equalTo(titulo);

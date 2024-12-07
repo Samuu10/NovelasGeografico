@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-
 import com.example.novelasgeografico.Almacenamiento.PreferencesManager;
 import com.example.novelasgeografico.GestionNovelas.Novela;
 import com.example.novelasgeografico.R;
@@ -80,10 +79,13 @@ public class MapaFragment extends Fragment {
         return view;
     }
 
-    //Metodo para actualizar los marcadores de las novelas en el mapa
+    //Metodo para actualizar los marcadores en el mapa
     public void actualizarMarcadores() {
-        mapView.getOverlays().clear();
+        // Limpiar los marcadores existentes
+        //mapView.getOverlays().clear();
         mapView.getOverlays().add(locationOverlay);
+
+        // Cargar y agregar los nuevos marcadores
         new LoadNovelaMarkersTask().execute();
     }
 
@@ -103,6 +105,7 @@ public class MapaFragment extends Fragment {
         }
     }
 
+    //Clase interna LoadNovelaMarkersTask que extiende AsyncTask y carga los marcadores de las novelas en el mapa en segundo plano
     private class LoadNovelaMarkersTask extends AsyncTask<Void, Void, List<Novela>> {
         @Override
         protected List<Novela> doInBackground(Void... voids) {
@@ -112,17 +115,19 @@ public class MapaFragment extends Fragment {
 
         @Override
         protected void onPostExecute(List<Novela> novelas) {
-            for (Novela novela : novelas) {
-                if (novela.getLatitude() != 0 && novela.getLongitude() != 0) {
-                    GeoPoint point = new GeoPoint(novela.getLatitude(), novela.getLongitude());
-                    Marker marker = new Marker(mapView);
-                    marker.setPosition(point);
-                    marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-                    marker.setTitle(novela.getTitulo());
-                    mapView.getOverlays().add(marker);
+            if (novelas != null) {
+                for (Novela novela : novelas) {
+                    if (novela.getLatitude() != 0 && novela.getLongitude() != 0) {
+                        GeoPoint point = new GeoPoint(novela.getLatitude(), novela.getLongitude());
+                        Marker marker = new Marker(mapView);
+                        marker.setPosition(point);
+                        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                        marker.setTitle(novela.getTitulo() + " - " + novela.getAutor());
+                        mapView.getOverlays().add(marker);
+                    }
                 }
+                mapView.invalidate();
             }
-            mapView.invalidate();
         }
     }
 }

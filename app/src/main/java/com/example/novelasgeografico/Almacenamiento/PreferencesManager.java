@@ -40,7 +40,7 @@ public class PreferencesManager {
     //Metodo para guardar las novelas en SharedPreferences
     public void saveNovelas(List<Novela> novelas) {
         if (novelas == null) {
-            return; // Avoid null pointer exceptions
+            return;
         }
         new SaveNovelasTask().execute(novelas);
     }
@@ -48,7 +48,7 @@ public class PreferencesManager {
     //Metodo para cargar las novelas de SharedPreferences
     public void loadNovelas(LoadNovelasCallback callback) {
         if (callback == null) {
-            return; // Avoid null pointer exceptions
+            return;
         }
         new LoadNovelasTask(callback).execute();
     }
@@ -58,7 +58,7 @@ public class PreferencesManager {
         @Override
         protected Void doInBackground(List<Novela>... lists) {
             if (lists == null || lists.length == 0) {
-                return null; // Avoid null pointer exceptions
+                return null;
             }
             List<Novela> novelas = lists[0];
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -69,7 +69,7 @@ public class PreferencesManager {
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {}
+        protected void onPostExecute(Void avoid) {}
     }
 
     //Clase interna LoadNovelasTask que extiende AsyncTask y carga las novelas en segundo plano

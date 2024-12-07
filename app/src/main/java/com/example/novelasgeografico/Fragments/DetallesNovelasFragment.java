@@ -45,6 +45,7 @@ public class DetallesNovelasFragment extends Fragment implements PreferencesMana
         TextView textViewAño = view.findViewById(R.id.textViewAñoDetalle);
         TextView textViewSinopsis = view.findViewById(R.id.textViewSinopsisDetalle);
         CheckBox checkBoxFavorito = view.findViewById(R.id.checkbox_favorito);
+
         checkBoxUbicacion = view.findViewById(R.id.checkbox_ubicacion);
 
         //Instanciar el PreferencesManager
@@ -59,6 +60,7 @@ public class DetallesNovelasFragment extends Fragment implements PreferencesMana
                 textViewAño.setText(String.valueOf(novela.getAñoPublicacion()));
                 textViewSinopsis.setText(novela.getSinopsis());
                 checkBoxFavorito.setChecked(novela.getFavorito());
+
                 checkBoxUbicacion.setChecked(novela.getLatitude() != 0 && novela.getLongitude() != 0);
             }
         }
@@ -120,6 +122,7 @@ public class DetallesNovelasFragment extends Fragment implements PreferencesMana
         preferencesManager = null;
     }
 
+    //Metodo para mostrar un dialogo para añadir una ubicación a la novela
     private void showAddLocationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         LayoutInflater inflater = getLayoutInflater();
@@ -136,6 +139,7 @@ public class DetallesNovelasFragment extends Fragment implements PreferencesMana
         builder.create().show();
     }
 
+    //Clase interna GeocodeCityTask que extiende AsyncTask y geocodifica una ciudad a coordenadas en segundo plano
     private class GeocodeCityTask extends AsyncTask<String, Void, Address> {
         @Override
         protected Address doInBackground(String... params) {
@@ -157,13 +161,20 @@ public class DetallesNovelasFragment extends Fragment implements PreferencesMana
             if (address != null) {
                 novela.setLatitude(address.getLatitude());
                 novela.setLongitude(address.getLongitude());
-                preferencesManager.saveNovelas(preferencesManager.loadNovelasSync());
-                Toast.makeText(requireContext(), "Ubicación añadida al mapa", Toast.LENGTH_SHORT).show();
-                if (getActivity() instanceof MainActivity) {
-                    ((MainActivity) getActivity()).actualizarMapa();
-                }
+                preferencesManager.loadNovelas(loadedNovelas -> {
+                    for (Novela n : loadedNovelas) {
+                        if (n.equals(novela)) {
+                            n.setLatitude(novela.getLatitude());
+                            n.setLongitude(novela.getLongitude());
+                            break;
+                        }
+                    }
+                    preferencesManager.saveNovelas(loadedNovelas);
+                    Toast.makeText(requireContext(), "Ubicación añadida", Toast.LENGTH_SHORT).show();
+                    ((MainActivity) requireActivity()).actualizarMapa();
+                });
             } else {
-                Toast.makeText(requireContext(), "Ciudad no encontrada", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "No se pudo encontrar la ubicación", Toast.LENGTH_SHORT).show();
                 checkBoxUbicacion.setChecked(false);
             }
         }

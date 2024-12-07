@@ -127,7 +127,6 @@ public class MainActivity extends AppCompatActivity implements PreferencesManage
 
     //Metodo para añadir una novela a la lista
     private void añadirNovelaLista(String titulo) {
-
         //Bucle para comprobar si la novela ya está en la lista
         for (Novela novela : novelas) {
             if (novela.getTitulo().equalsIgnoreCase(titulo)) {
@@ -165,7 +164,6 @@ public class MainActivity extends AppCompatActivity implements PreferencesManage
 
     //Metodo para eliminar una novela de la lista
     private void eliminarNovelaLista(String titulo) {
-
         //Bucle para buscar la novela en la lista y eliminarla
         for (Novela novela : novelas) {
             //Si la novela se encuentra en la lista, se elimina y se actualizan las listas
@@ -206,21 +204,12 @@ public class MainActivity extends AppCompatActivity implements PreferencesManage
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, reload the fragment
+                //Si se conceden los permisos, se carga el fragmento del mapa
                 loadFragment(new MapaFragment(), "Mapa");
             } else {
-                // Permission denied, show a message to the user
+                //Si no se conceden los permisos, se muestra un mensaje de error
                 Toast.makeText(this, "Location permission is required to show the map", Toast.LENGTH_SHORT).show();
             }
-        }
-    }
-
-    //Metodo para actualizar el mapa
-    public void actualizarMapa() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        MapaFragment mapaFragment = (MapaFragment) fragmentManager.findFragmentByTag("Mapa");
-        if (mapaFragment != null) {
-            mapaFragment.actualizarMarcadores();
         }
     }
 
@@ -242,5 +231,13 @@ public class MainActivity extends AppCompatActivity implements PreferencesManage
         firebaseHelper = null;
         preferencesManager = null;
         novelas = null;
+    }
+
+    //Metodo en MainActivity para actualizar el mapa
+    public void actualizarMapa() {
+        MapaFragment mapaFragment = (MapaFragment) getSupportFragmentManager().findFragmentByTag("Mapa");
+        if (mapaFragment != null) {
+            mapaFragment.actualizarMarcadores();
+        }
     }
 }
