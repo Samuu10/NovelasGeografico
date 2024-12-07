@@ -119,6 +119,15 @@ public class MapaFragment extends Fragment {
         }
     }
 
+    //Metodo para gestionar la destrucción del fragmento y liberar recursos
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mapView != null) {
+            mapView.onDetach();
+        }
+    }
+
     //Clase interna LoadNovelaMarkersTask que extiende AsyncTask y carga los marcadores de las novelas en el mapa en segundo plano
     private class LoadNovelaMarkersTask extends AsyncTask<Void, Void, List<Novela>> {
         @Override
@@ -142,6 +151,7 @@ public class MapaFragment extends Fragment {
                         mapView.getOverlays().add(marker);
                     }
                 }
+                //Refrescamos el mapa
                 mapView.invalidate();
             }
         }

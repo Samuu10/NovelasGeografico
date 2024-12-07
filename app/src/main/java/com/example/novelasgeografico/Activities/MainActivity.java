@@ -78,10 +78,26 @@ public class MainActivity extends AppCompatActivity implements PreferencesManage
         fragmentTransaction.replace(R.id.fragment_container, fragment, tag);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
+
+        //Deshabilitamos los botones de añadir y eliminar novelas si se está en el  MapaFragment
+        if (fragment instanceof MapaFragment) {
+            findViewById(R.id.btn_agregar).setEnabled(false);
+            findViewById(R.id.btn_eliminar).setEnabled(false);
+        } else {
+            findViewById(R.id.btn_agregar).setEnabled(true);
+            findViewById(R.id.btn_eliminar).setEnabled(true);
+        }
     }
 
     //metodo para cambiar entre la lista de novelas y la lista de favoritas
     private void cambiarLista() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
+
+        if (currentFragment instanceof MapaFragment) {
+            fragmentManager.popBackStack();
+        }
+
         if (showingFavorites) {
             loadFragment(new ListaNovelasFragment(), "Lista de Novelas");
         } else {
