@@ -38,20 +38,19 @@ public class DetallesNovelasFragment extends Fragment implements PreferencesMana
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        //Inflar el layout para este fragmento
+        //Inflamos el layout para este fragmento e instanciamos los elementos de la vista
         View view = inflater.inflate(R.layout.fragment_detalles_novela, container, false);
         TextView textViewTitulo = view.findViewById(R.id.textViewTituloDetalle);
         TextView textViewAutor = view.findViewById(R.id.textViewAutorDetalle);
         TextView textViewAño = view.findViewById(R.id.textViewAñoDetalle);
         TextView textViewSinopsis = view.findViewById(R.id.textViewSinopsisDetalle);
         CheckBox checkBoxFavorito = view.findViewById(R.id.checkbox_favorito);
-
         checkBoxUbicacion = view.findViewById(R.id.checkbox_ubicacion);
 
-        //Instanciar el PreferencesManager
+        //Instanciamos el PreferencesManager
         preferencesManager = new PreferencesManager(requireContext());
 
-        //Obtener la novela seleccionada y mostrar sus detalles
+        //Obtenemos la novela seleccionada y mostramos sus detalles
         if (getArguments() != null) {
             novela = getArguments().getParcelable("novela");
             if (novela != null) {
@@ -60,7 +59,6 @@ public class DetallesNovelasFragment extends Fragment implements PreferencesMana
                 textViewAño.setText(String.valueOf(novela.getAñoPublicacion()));
                 textViewSinopsis.setText(novela.getSinopsis());
                 checkBoxFavorito.setChecked(novela.getFavorito());
-
                 checkBoxUbicacion.setChecked(novela.getLatitude() != 0 && novela.getLongitude() != 0);
             }
         }
@@ -82,16 +80,16 @@ public class DetallesNovelasFragment extends Fragment implements PreferencesMana
         //Checkbox para añadir ubicación
         checkBoxUbicacion.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                showAddLocationDialog();
+                mostrarDialogoUbicacion();
             } else {
                 novela.setLatitude(0);
                 novela.setLongitude(0);
                 preferencesManager.saveNovelas(preferencesManager.loadNovelasSync());
-                //Toast.makeText(requireContext(), "Ubicación eliminada", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Ubicación eliminada", Toast.LENGTH_SHORT).show();
             }
         });
 
-        //Boton para volver a la lista de novelas
+        //Botón para volver a la lista de novelas
         view.findViewById(R.id.btn_volver).setOnClickListener(v -> {
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().popBackStack();
@@ -123,7 +121,7 @@ public class DetallesNovelasFragment extends Fragment implements PreferencesMana
     }
 
     //Metodo para mostrar un dialogo para añadir una ubicación a la novela
-    private void showAddLocationDialog() {
+    private void mostrarDialogoUbicacion() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_add_location, null);
@@ -146,6 +144,7 @@ public class DetallesNovelasFragment extends Fragment implements PreferencesMana
             String cityName = params[0];
             Geocoder geocoder = new Geocoder(requireContext());
             try {
+                //Obtenemos las coordenadas de la ciudad introducida por el usuario
                 List<Address> addresses = geocoder.getFromLocationName(cityName, 1);
                 if (addresses != null && !addresses.isEmpty()) {
                     return addresses.get(0);
@@ -156,11 +155,14 @@ public class DetallesNovelasFragment extends Fragment implements PreferencesMana
             return null;
         }
 
+        //Metodo onPostExecute para añadir las coordenadas a la novela despues de geocodificar la ciudad
         @Override
         protected void onPostExecute(Address address) {
             if (address != null) {
+                //Establecemos las coordenadas de la novela
                 novela.setLatitude(address.getLatitude());
                 novela.setLongitude(address.getLongitude());
+                //Guardamos las novelas actualizadas en sharedPreferences
                 preferencesManager.loadNovelas(loadedNovelas -> {
                     for (Novela n : loadedNovelas) {
                         if (n.equals(novela)) {
@@ -171,6 +173,7 @@ public class DetallesNovelasFragment extends Fragment implements PreferencesMana
                     }
                     preferencesManager.saveNovelas(loadedNovelas);
                     Toast.makeText(requireContext(), "Ubicación añadida", Toast.LENGTH_SHORT).show();
+                    //Actualizamos el mapa
                     ((MainActivity) requireActivity()).actualizarMapa();
                 });
             } else {

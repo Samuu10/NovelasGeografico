@@ -5,19 +5,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.novelasgeografico.R;
 import com.example.novelasgeografico.Activities.MainActivity;
 import com.example.novelasgeografico.Almacenamiento.PreferencesManager;
 import com.example.novelasgeografico.GestionNovelas.Novela;
 import com.example.novelasgeografico.GestionNovelas.NovelaAdapter;
-
 import java.util.List;
 
 //Clase ListaNovelasFragment que representa el fragmento que muestra la lista de novelas
@@ -34,7 +31,7 @@ public class ListaNovelasFragment extends Fragment implements PreferencesManager
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        //Inflar el layout para este fragmento
+        //Inflamos el layout para este fragmento e instanciamos los elementos de la vista
         View view = inflater.inflate(R.layout.fragment_lista_novelas, container, false);
         recyclerView = view.findViewById(R.id.recyclerViewMainNovelas);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

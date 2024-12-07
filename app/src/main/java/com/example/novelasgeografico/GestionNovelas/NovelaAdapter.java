@@ -8,7 +8,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.novelasgeografico.R;
-
 import java.util.List;
 
 //Clase NovelaAdapter que extiende BaseAdapter y se utiliza para mostrar la lista de novelas

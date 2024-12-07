@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
 import com.example.novelasgeografico.Fragments.MapaFragment;
 import com.example.novelasgeografico.R;
 import com.example.novelasgeografico.Almacenamiento.FirebaseHelper;
@@ -233,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements PreferencesManage
         novelas = null;
     }
 
-    //Metodo en MainActivity para actualizar el mapa
+    //Metodo para actualizar el mapa al añadir o eliminar una ubicación de una novela
     public void actualizarMapa() {
         MapaFragment mapaFragment = (MapaFragment) getSupportFragmentManager().findFragmentByTag("Mapa");
         if (mapaFragment != null) {

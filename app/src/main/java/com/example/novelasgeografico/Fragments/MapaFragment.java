@@ -24,11 +24,12 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
-
 import java.util.List;
 
+//Clase MapaFragment que representa el fragmento que muestra un mapa con la ubicación de las novelas y del usuario
 public class MapaFragment extends Fragment {
 
+    //Variables
     private MapView mapView;
     private MyLocationNewOverlay locationOverlay;
 
@@ -39,36 +40,45 @@ public class MapaFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_mapa, container, false);
 
         try {
+            //Configuramos el contexto de la librería osmdroid
             Configuration.getInstance().setUserAgentValue(requireContext().getPackageName());
 
             mapView = view.findViewById(R.id.map);
-            mapView.setTileSource(TileSourceFactory.MAPNIK);
-            mapView.setMultiTouchControls(true);
+            if (mapView != null) {
+                //Configuramos el mapa
+                mapView.setTileSource(TileSourceFactory.MAPNIK);
+                mapView.setMultiTouchControls(true);
 
-            locationOverlay = new MyLocationNewOverlay(mapView);
-            locationOverlay.enableMyLocation();
-            locationOverlay.enableFollowLocation();
-            mapView.getOverlays().add(locationOverlay);
+                //Añadimos la capa de ubicación
+                locationOverlay = new MyLocationNewOverlay(mapView);
+                locationOverlay.enableMyLocation();
+                locationOverlay.enableFollowLocation();
+                mapView.getOverlays().add(locationOverlay);
 
-            IMapController mapController = mapView.getController();
-            mapController.setZoom(4.0);
+                //Centramos el mapa en la ubicación actual del usuario
+                IMapController mapController = mapView.getController();
+                mapController.setZoom(4.0);
 
-            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                Location lastKnownLocation = locationOverlay.getLastFix();
-                if (lastKnownLocation != null) {
-                    GeoPoint startPoint = new GeoPoint(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
-                    mapController.setCenter(startPoint);
+                //Si se ha concedido el permiso de ubicación, gesionamos la ubicación del usuario
+                if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    Location lastKnownLocation = locationOverlay.getLastFix();
+                    if (lastKnownLocation != null) {
+                        GeoPoint startPoint = new GeoPoint(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+                        mapController.setCenter(startPoint);
 
-                    // Add a marker for the user's location
-                    Marker startMarker = new Marker(mapView);
-                    startMarker.setPosition(startPoint);
-                    startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-                    startMarker.setTitle("You are here");
-                    mapView.getOverlays().add(startMarker);
+                        //Añadimos al mapa el marcador de la ubicación actual del usuario
+                        Marker startMarker = new Marker(mapView);
+                        startMarker.setPosition(startPoint);
+                        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                        startMarker.setTitle("You are here");
+                        mapView.getOverlays().add(startMarker);
+                    }
+                } else {
+                    //Si no se ha concedido el permiso de ubicación, solicitarlo
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
                 }
             } else {
-                // Request location permission if not granted
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                Log.e("MapaFragment", "MapView is null");
             }
         } catch (Exception e) {
             Log.e("MapaFragment", "Error initializing MapView", e);
@@ -81,14 +91,17 @@ public class MapaFragment extends Fragment {
 
     //Metodo para actualizar los marcadores en el mapa
     public void actualizarMarcadores() {
-        // Limpiar los marcadores existentes
-        //mapView.getOverlays().clear();
-        mapView.getOverlays().add(locationOverlay);
+        if (mapView != null) {
+            //Limpiamos los marcadores existentes
+            mapView.getOverlays().clear();
+            mapView.getOverlays().add(locationOverlay);
 
-        // Cargar y agregar los nuevos marcadores
-        new LoadNovelaMarkersTask().execute();
+            //Cargamos y agregamos los nuevos marcadores
+            new LoadNovelaMarkersTask().execute();
+        }
     }
 
+    //Metodo para gestionar la pausa del fragmento y liberar recursos
     @Override
     public void onResume() {
         super.onResume();
@@ -97,6 +110,7 @@ public class MapaFragment extends Fragment {
         }
     }
 
+    //Metodo para gestionar la pausa del fragmento y liberar recursos
     @Override
     public void onPause() {
         super.onPause();
@@ -113,11 +127,13 @@ public class MapaFragment extends Fragment {
             return preferencesManager.loadNovelasSync();
         }
 
+        //Metodo onPostExecute para añadir los marcadores al mapa despues de cargar las novelas
         @Override
         protected void onPostExecute(List<Novela> novelas) {
-            if (novelas != null) {
+            if (mapView != null && novelas != null) {
                 for (Novela novela : novelas) {
                     if (novela.getLatitude() != 0 && novela.getLongitude() != 0) {
+                        //Añadimos al mapa el marcador de la ubicación de la novela
                         GeoPoint point = new GeoPoint(novela.getLatitude(), novela.getLongitude());
                         Marker marker = new Marker(mapView);
                         marker.setPosition(point);
