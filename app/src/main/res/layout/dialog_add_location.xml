@@ -8,6 +8,6 @@
         android:id="@+id/editTextCity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Ingrese el nombre de la ciudad" />
+        android:hint="Nombre del país/ciudad (minúsculas)" />
 
 </LinearLayout>

@@ -84,8 +84,17 @@ public class DetallesNovelasFragment extends Fragment implements PreferencesMana
             } else {
                 novela.setLatitude(0);
                 novela.setLongitude(0);
-                preferencesManager.saveNovelas(preferencesManager.loadNovelasSync());
-                Toast.makeText(requireContext(), "Ubicación eliminada", Toast.LENGTH_SHORT).show();
+                preferencesManager.loadNovelas(loadedNovelas -> {
+                    for (Novela n : loadedNovelas) {
+                        if (n.equals(novela)) {
+                            n.setLatitude(0);
+                            n.setLongitude(0);
+                            break;
+                        }
+                    }
+                    preferencesManager.saveNovelas(loadedNovelas);
+                    Toast.makeText(requireContext(), "Ubicación eliminada", Toast.LENGTH_SHORT).show();
+                });
             }
         });
 
